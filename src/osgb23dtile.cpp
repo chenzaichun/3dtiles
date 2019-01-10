@@ -503,9 +503,9 @@ bool osgb2glb_buf(std::string path, std::string& glb_buff, std::vector<mesh_info
             bfv.byteLength = buffer.data.size() - buf_offset;
             buf_offset = buffer.data.size();
             if (infoVisitor.geometry_array.size() > 1) {
-                if (j == 1) { bfv.byteStride = 4 * 3; } // ¶¥µã
-                if (j == 2) { bfv.byteStride = 4 * 3; } // ·¨Ïß
-                if (j == 3) { bfv.byteStride = 4 * 2; } // ÌùÍ¼
+                if (j == 1) { bfv.byteStride = 4 * 3; } 
+                if (j == 2) { bfv.byteStride = 4 * 3; }
+                if (j == 3) { bfv.byteStride = 4 * 2; } 
             }
             model.bufferViews.push_back(bfv);
         }
@@ -647,21 +647,21 @@ bool osgb2glb_buf(std::string path, std::string& glb_buff, std::vector<mesh_info
                 material.values["baseColorTexture"] = baseColorTexture;
 
                 tinygltf::Parameter metallicFactor;
-                metallicFactor.number_value = 0;
+                metallicFactor.number_value = new double(0);
                 material.values["metallicFactor"] = metallicFactor;
                 tinygltf::Parameter roughnessFactor;
-                roughnessFactor.number_value = 1;
+                roughnessFactor.number_value = new double(1);
                 material.values["roughnessFactor"] = roughnessFactor;
                 /// ---------
-                tinygltf::Parameter emissiveFactor;
-                emissiveFactor.number_array = { 0.0,0.0,0.0 };
-                material.additionalValues["emissiveFactor"] = emissiveFactor;
-                tinygltf::Parameter alphaMode;
-                alphaMode.string_value = "OPAQUE";
-                material.additionalValues["alphaMode"] = alphaMode;
-                tinygltf::Parameter doubleSided;
-                doubleSided.bool_value = false;
-                material.additionalValues["doubleSided"] = doubleSided;
+//                 tinygltf::Parameter emissiveFactor;
+//                 emissiveFactor.number_array = { 0.0,0.0,0.0 };
+//                 material.additionalValues["emissiveFactor"] = emissiveFactor;
+//                 tinygltf::Parameter alphaMode;
+//                 alphaMode.string_value = "OPAQUE";
+//                 material.additionalValues["alphaMode"] = alphaMode;
+//                 tinygltf::Parameter doubleSided;
+//                 doubleSided.bool_value = false;
+//                 material.additionalValues["doubleSided"] = doubleSided;
                 //
                 model.materials.push_back(material);
             }
@@ -1062,10 +1062,10 @@ std::string encode_tile_json(osg_tree& tree, double x, double y) {
     sprintf(buf, "{ \"geometricError\":%.2f,", tree.geometricError);
     std::string tile = buf;
     TileBox cBox = tree.bbox;
-    cBox.extend(0.1);
+    //cBox.extend(0.1);
     std::string content_box = get_boundingBox(cBox);
     TileBox bbox = tree.bbox;
-    bbox.extend(0.1);
+    //bbox.extend(0.1);
     std::string tile_box = get_boundingBox(bbox);
 
     tile += tile_box;
