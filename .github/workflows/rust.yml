@@ -23,6 +23,7 @@ jobs:
       run: |
           cd src
           ln -sf gdal_linux gdal
+          sudo apt install mesa-common-dev -y
 
     - name: create windows link
       if: matrix.os == 'windows-latest'
@@ -57,7 +58,7 @@ jobs:
         mv bin ${ZIP_NAME}
         7z a artifact/${ZIP_NAME}.zip ${ZIP_NAME}*
 
-    - name: Create 3dtiles windows archive
+    - name: Create 3dtiles linux archive
       if: matrix.os == 'ubuntu-latest'
       shell: bash
       env:
