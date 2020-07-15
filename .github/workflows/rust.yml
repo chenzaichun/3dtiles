@@ -51,6 +51,24 @@ jobs:
     # - name: Run tests
     #   run: cargo test --verbose
 
+    - name: Upload windows artifact
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        # Artifact name
+        name: _3dtile.exe
+        # Directory containing files to upload
+        path: bin/
+
+    - name: Upload ubuntu artifact
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        # Artifact name
+        name: _3dtile
+        # Directory containing files to upload
+        path: lib_glibc2.27/
+
     - name: Create 3dtiles windows archive
       if: matrix.os == 'windows-latest'
       shell: bash
@@ -70,24 +88,6 @@ jobs:
         mkdir artifact
         mv lib_glibc2.27 ${ZIP_NAME}
         7z a artifact/${ZIP_NAME}.zip ${ZIP_NAME}*
-
-    - name: Upload windows artifact
-      if: matrix.os == 'windows-latest'
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        # Artifact name
-        name: _3dtile.exe
-        # Directory containing files to upload
-        path: bin/
-
-    - name: Upload ubuntu artifact
-      if: matrix.os == 'ubuntu-latest'
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        # Artifact name
-        name: _3dtile
-        # Directory containing files to upload
-        path: lib_glibc2.27/
 
     - name: Declare branch and sha
       id: vars
