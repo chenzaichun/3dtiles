@@ -4,22 +4,105 @@ on: [push]
 
 jobs:
   build:
-
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            zip_name: ninja-ubuntu
+          - os: windows-latest
+            zip_name: ninja-win
 
     steps:
     - uses: actions/checkout@v1
-    - name: Build
+
+    # create soft link for each platform
+    - name: create windows link
+      if: matrix.os == 'ubuntu-latest'
+      run: ln -sf src/gdal_linux src/gdal
+
+    - name: create windows link
+      if: matrix.os == 'windows-latest'
+      run: ln -sf src/gdal_windows src/gdal
+
+    - name: Build for windows
+      if: matrix.os == 'windows-latest'
       run: |
         cargo build --verbose --release
         cp target/release/_3dtile.exe bin/
     
+    - name: Build for windows
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        cargo build --verbose --release
+        cp target/release/_3dtile lib_glibc2.27/
+    
     - name: Run tests
       run: cargo test --verbose
-    - name: Upload artifact
+
+    - name: Create 3dtiles windows archive
+      if: matrix.os == 'windows-latest'
+      shell: bash
+      env:
+        ZIP_NAME: ${{ matrix.zip_name }}
+      run: |
+        mkdir artifact
+        mv bin ${ZIP_NAME}
+        7z a artifact/${ZIP_NAME}.zip ${ZIP_NAME}*
+
+    - name: Create 3dtiles windows archive
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash
+      env:
+        ZIP_NAME: ${{ matrix.zip_name }}
+      run: |
+        mkdir artifact
+        mv lib_glibc2.27 ${ZIP_NAME}
+        7z a artifact/${ZIP_NAME}.zip ${ZIP_NAME}*
+
+    - name: Upload windows artifact
       uses: actions/upload-artifact@v1.0.0
       with:
         # Artifact name
-        name: 3dtile
+        name: _3dtile.exe
         # Directory containing files to upload
         path: bin/
+
+    - name: Upload ubuntu artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        # Artifact name
+        name: _3dtile
+        # Directory containing files to upload
+        path: bin/
+
+    - name: Declare branch and sha
+      id: vars
+      shell: bash
+      run: |
+        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.vars.outputs.branch }}.${{ steps.vars.outputs.sha_short }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: true
+
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ZIP_NAME: ${{ matrix.zip_name }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: artifact/${ZIP_NAME}.zip
+        asset_name: ${ZIP_NAME}.zip
+        asset_content_type: application/zip
