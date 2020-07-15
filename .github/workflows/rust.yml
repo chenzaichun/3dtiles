@@ -24,6 +24,7 @@ jobs:
 
     - name: create windows link
       if: matrix.os == 'windows-latest'
+      shell: bash
       run: |
           export MSYS=winsymlinks:nativestrict
           cd src
