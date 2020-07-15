@@ -23,6 +23,7 @@ jobs:
       run: |
           cd src
           ln -sf gdal_linux gdal
+          ln -sf osg_linux osb
           sudo apt update && sudo apt install mesa-common-dev -y
 
     - name: create windows link
@@ -32,6 +33,7 @@ jobs:
           export MSYS=winsymlinks:nativestrict
           cd src
           ln -sf gdal_windows gdal
+          ln -sf osg_windows osg
 
     - name: Build for windows
       if: matrix.os == 'windows-latest'
