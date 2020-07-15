@@ -71,6 +71,7 @@ jobs:
         7z a artifact/${ZIP_NAME}.zip ${ZIP_NAME}*
 
     - name: Upload windows artifact
+      if: matrix.os == 'windows-latest'
       uses: actions/upload-artifact@v1.0.0
       with:
         # Artifact name
@@ -79,6 +80,7 @@ jobs:
         path: bin/
 
     - name: Upload ubuntu artifact
+      if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v1.0.0
       with:
         # Artifact name
@@ -117,5 +119,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         asset_path: ./artifact/${{ matrix.zip_name }}.zip
-        asset_name: ${{ matrix.zip_name }}
+        asset_name: ${{ matrix.zip_name }}.zip
         asset_content_type: application/zip
