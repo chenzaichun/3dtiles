@@ -76,7 +76,8 @@ fn build_linux_unkonw() {
         .flag("-std=c++11")
         .warnings(false)
         .include("./src")
-        .include("./src/osg")
+        .include("./src/osg_linux")
+        .include("./src/gdal_linux")
         .file("./src/tileset.cpp")
         .file("./src/shp23dtile.cpp")
         .file("./src/osgb23dtile.cpp")
@@ -84,7 +85,7 @@ fn build_linux_unkonw() {
         .file("./src/make_gltf.cpp")
         .compile("3dtile");
     // -------------
-    println!("cargo:rustc-link-search=native=./lib");
+    println!("cargo:rustc-link-search=native=./lib_glibc2.27");
     // -------------
     println!("cargo:rustc-link-lib=gdal");
     println!("cargo:rustc-link-lib=OpenThreads");
