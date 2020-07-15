@@ -89,9 +89,13 @@ jobs:
     - name: Declare branch and sha
       id: vars
       shell: bash
+      env:
+        ZIP_NAME: ${{ matrix.zip_name }}
       run: |
         echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+        echo "::set-ouptut name=asset_name::$(echo ${ZIP_NAME}.zip)"
+        echo "::set-ouptut name=asset_path::$(echo artifact/${ZIP_NAME}.zip)"
 
     - name: Create Release
       id: create_release
@@ -99,8 +103,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.vars.outputs.branch }}.${{ steps.vars.outputs.sha_short }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
+        release_name: Release ${{ steps.vars.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
         draft: false
         prerelease: true
 
@@ -112,6 +116,6 @@ jobs:
         ZIP_NAME: ${{ matrix.zip_name }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: artifact/${{ ZIP_NAME }}.zip
-        asset_name: ${{ ZIP_NAME }}.zip
+        asset_path: ${{ steps.vars.outputs.asset_path }}
+        asset_name: ${{ steps.vars.outputs.asset_name }}
         asset_content_type: application/zip
