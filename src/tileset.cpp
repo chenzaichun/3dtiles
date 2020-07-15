@@ -28,6 +28,22 @@ extern "C" bool epsg_convert(int insrs, double* val, char* path) {
     return false;
 } 
 
+extern "C" bool wkt_convert(char* wkt, double* val, char* path) {
+    CPLSetConfigOption("GDAL_DATA", path);
+    OGRSpatialReference inRs,outRs;
+    inRs.importFromWkt(&wkt);
+    outRs.importFromEPSG(4326);
+    OGRCoordinateTransformation *poCT = OGRCreateCoordinateTransformation( &inRs, &outRs );
+    if (poCT) {
+        if (poCT->Transform( 1, val, val + 1)) {
+            delete poCT;
+            return true;
+        }
+        delete poCT;
+    }
+    return false;
+}
+
 extern "C"
 {
 	double degree2rad(double val) {
@@ -156,7 +172,7 @@ bool write_tileset_box(
         sprintf(last_buf,"]},\"geometricError\": %f,\
             \"refine\": \"REPLACE\",\
             \"content\": {\
-                \"url\": \"%s\"}}}", geometricError, b3dm_file);
+                \"uri\": \"%s\"}}}", geometricError, b3dm_file);
 
         json_txt += last_buf;
 
@@ -206,7 +222,7 @@ bool write_tileset_box(
             sprintf(last_buf,"]},\"geometricError\": %f,\
                 \"refine\": \"REPLACE\",\
                 \"content\": {\
-                    \"url\": \"%s\"}}}", geometricError, b3dm_file);
+                    \"uri\": \"%s\"}}}", geometricError, b3dm_file);
 
             json_txt += last_buf;
 
@@ -318,7 +334,7 @@ bool write_tileset_box(
                     sprintf(last_buf,"]},\"geometricError\": %f,\
                         \"refine\": \"REPLACE\",\
                         \"content\": {\
-                            \"url\": \"%s\"}}}", geometricError, filename);
+                            \"uri\": \"%s\"}}}", geometricError, filename);
 
                     json_txt += last_buf;
 

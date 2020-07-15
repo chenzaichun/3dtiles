@@ -100,6 +100,8 @@ fbx => 3dtile, convert fbx file to 3dtile, include auto_lod\texture convert etc.
 
 shapefile 中需要有字段来表示高度信息。
 
+仅支持WGS84坐标系的矢量数据。
+
 
 **3、通用模型转gltf：**
 
@@ -113,24 +115,35 @@ shapefile 中需要有字段来表示高度信息。
 
 
 # Who use / Who star
+. NASA JPL (gkjohnson)
 
-. AnalyticalGraphicsInc
+. AnalyticalGraphicsInc (kring)
 
-. Geostar
+. NVIDIA (Vinjn Zhang)
 
-. Geo-compass
+. Ubisoft (Cmdu76)
 
-. MapTalks
+. Baidu (hinikai)
 
-. Alibaba
+. Esri (suny323)
 
-. SuperEngine
+. Geostar (hekaikai\shitao1988)
 
-. Data Cloud Co. Ltd.
+. Geo-compass (wucangeo)
 
-. Guangzhou University
+. MapTalks (brucin\fuzhenn\axmand)
 
-. Hopkins University
+. Alibaba (luxueyan)
+
+. Data Cloud Co. Ltd (liujin834)
+
+. Tsinghua University (DeZhao-Zhang)
+
+. Wuhan University (chenguanzhou)
+
+. Guangzhou University (LreeLenn)
+
+. Hopkins University (AndrewAnnex)
 
 . 中国铁道科学设计研究院
 
@@ -140,15 +153,10 @@ shapefile 中需要有字段来表示高度信息。
 
 . 宁波市测绘设计研究院
 
-. 合肥火星科技有限公司
+. 合肥火星科技有限公司 (muyao1987)
 
-. 北京五维智能科技
-
-. 北京西部数据科技
+. 北京西部数据科技 (vtxf\elfc2000)
 
 # About author
 
 作者不是专业搞三维GIS的，因偶尔有个需求要展示3dtile，一时找不到工具，就写了个轮子，代码多有纰漏，仅供参考。
-
-QQ：1378240129
-

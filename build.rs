@@ -1,5 +1,4 @@
 extern crate cc;
-use std::fs;
 use std::env;
 use std::process::{Command, Stdio};
 
@@ -11,7 +10,7 @@ fn build_win_msvc() {
         .flag("-INCREMENTAL")
         .warnings(false)
         .define("WIN32", None)
-        .define("_WINDOWS",None)
+        .define("_WINDOWS", None)
         .include("./src")
         .include("./src/osg")
         .file("./src/tileset.cpp")
@@ -19,7 +18,7 @@ fn build_win_msvc() {
         .file("./src/osgb23dtile.cpp")
         .file("./src/dxt_img.cpp")
         .file("./src/make_gltf.cpp")
-        .compile("3dtile");
+        .compile("_3dtile");
     // -------------
     println!("cargo:rustc-link-search=native=./lib");
     // -------------
@@ -30,9 +29,14 @@ fn build_win_msvc() {
     println!("cargo:rustc-link-lib=osgViewer");
 
     Command::new("cmd")
-        .args(
-            &["/C", "xcopy", r#".\bin"#, &format!(r#".\target\{}"#, env::var("PROFILE").unwrap()), "/y", "/e"],
-        )
+        .args(&[
+            "/C",
+            "xcopy",
+            r#".\bin"#,
+            &format!(r#".\target\{}"#, env::var("PROFILE").unwrap()),
+            "/y",
+            "/e",
+        ])
         .stdout(Stdio::inherit())
         .output()
         .unwrap();
@@ -51,7 +55,7 @@ fn build_win_gun() {
         .file("./src/osgb23dtile.cpp")
         .file("./src/dxt_img.cpp")
         .file("./src/make_gltf.cpp")
-        .compile("3dtile");
+        .compile("_3dtile");
     // -------------
     println!("cargo:rustc-link-search=native=./lib");
     // -------------
@@ -62,12 +66,17 @@ fn build_win_gun() {
     println!("cargo:rustc-link-lib=OpenThreads");
 
     Command::new("cmd")
-    .args(
-        &["/C", "xcopy", r#".\bin"#, &format!(r#".\target\{}"#, env::var("PROFILE").unwrap()), "/y", "/e"],
-    )
-    .stdout(Stdio::inherit())
-    .output()
-    .unwrap();
+        .args(&[
+            "/C",
+            "xcopy",
+            r#".\bin"#,
+            &format!(r#".\target\{}"#, env::var("PROFILE").unwrap()),
+            "/y",
+            "/e",
+        ])
+        .stdout(Stdio::inherit())
+        .output()
+        .unwrap();
 }
 
 fn build_linux_unkonw() {
@@ -83,7 +92,7 @@ fn build_linux_unkonw() {
         .file("./src/osgb23dtile.cpp")
         .file("./src/dxt_img.cpp")
         .file("./src/make_gltf.cpp")
-        .compile("3dtile");
+        .compile("_3dtile");
     // -------------
     println!("cargo:rustc-link-search=native=./lib_glibc2.27");
     // -------------
@@ -95,16 +104,13 @@ fn build_linux_unkonw() {
 }
 
 fn main() {
-    use std::env;
     match env::var("TARGET") {
-        Ok(val) => {
-            match val.as_str() {
-                "x86_64-pc-windows-gnu" => build_win_gun(),
-                "x86_64-unknown-linux-gnu" => build_linux_unkonw(),
-                "x86_64-pc-windows-msvc" => build_win_msvc(),
-                &_ => {}
-            }
-        }
+        Ok(val) => match val.as_str() {
+            "x86_64-pc-windows-gnu" => build_win_gun(),
+            "x86_64-unknown-linux-gnu" => build_linux_unkonw(),
+            "x86_64-pc-windows-msvc" => build_win_msvc(),
+            &_ => {}
+        },
         _ => {}
     }
 }
