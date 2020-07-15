@@ -47,8 +47,8 @@ jobs:
         cargo build --verbose --release
         cp target/release/_3dtile lib_glibc2.27/
     
-    - name: Run tests
-      run: cargo test --verbose
+    # - name: Run tests
+    #   run: cargo test --verbose
 
     - name: Create 3dtiles windows archive
       if: matrix.os == 'windows-latest'
