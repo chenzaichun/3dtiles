@@ -20,7 +20,9 @@ jobs:
     # create soft link for each platform
     - name: create linux link
       if: matrix.os == 'ubuntu-latest'
-      run: ln -sf src/gdal_linux src/gdal
+      run: |
+          cd src
+          ln -sf gdal_linux gdal
 
     - name: create windows link
       if: matrix.os == 'windows-latest'
