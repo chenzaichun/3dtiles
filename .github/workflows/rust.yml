@@ -10,21 +10,24 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            zip_name: ninja-ubuntu
+            zip_name: 3dtiles-ubuntu
           - os: windows-latest
-            zip_name: ninja-win
+            zip_name: 3dtiles-windows
 
     steps:
     - uses: actions/checkout@v1
 
     # create soft link for each platform
-    - name: create windows link
+    - name: create linux link
       if: matrix.os == 'ubuntu-latest'
       run: ln -sf src/gdal_linux src/gdal
 
     - name: create windows link
       if: matrix.os == 'windows-latest'
-      run: ln -sf src/gdal_windows src/gdal
+      run: |
+          export MSYS=winsymlinks:nativestrict
+          cd src
+          ln -sf gdal_windows gdal
 
     - name: Build for windows
       if: matrix.os == 'windows-latest'
@@ -32,7 +35,7 @@ jobs:
         cargo build --verbose --release
         cp target/release/_3dtile.exe bin/
     
-    - name: Build for windows
+    - name: Build for linux
       if: matrix.os == 'ubuntu-latest'
       run: |
         cargo build --verbose --release
