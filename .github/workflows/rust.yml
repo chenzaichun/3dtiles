@@ -37,6 +37,7 @@ jobs:
 
     - name: Build for windows
       if: matrix.os == 'windows-latest'
+      shell: bash
       run: |
         cargo build --verbose --release
         cp target/release/_3dtile.exe bin/
@@ -86,7 +87,7 @@ jobs:
         # Artifact name
         name: _3dtile
         # Directory containing files to upload
-        path: bin/
+        path: lib_glibc2.27/
 
     - name: Declare branch and sha
       id: vars
